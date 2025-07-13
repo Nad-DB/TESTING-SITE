@@ -27,9 +27,9 @@ new RGBELoader()
   });
 
 // ✅ Boosted lighting setup
-scene.add(new THREE.AmbientLight(0xffffff, 0.8)); // was 0.4
+scene.add(new THREE.AmbientLight(0xffffff, 8)); // was 0.4
 
-const dirLight = new THREE.DirectionalLight(0xffffff, 1.2); // was 0.6
+const dirLight = new THREE.DirectionalLight(0xffffff, 12); // was 0.6
 dirLight.position.set(5, 10, 10);
 scene.add(dirLight);
 
