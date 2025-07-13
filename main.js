@@ -4,10 +4,10 @@ import { RGBELoader } from 'three/addons/loaders/RGBELoader.js';
 
 // Scene setup
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x1a1a1a); // dark gray background
+scene.background = new THREE.Color(0x1a1a1a);
 
 const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 100);
-camera.position.set(0, 1.5, 4); // You can tweak these
+camera.position.set(0, 1.5, 4);
 camera.lookAt(0, 0, 0);
 
 // Renderer
@@ -15,23 +15,28 @@ const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.outputEncoding = THREE.sRGBEncoding;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.5; // Boost brightness
 document.body.appendChild(renderer.domElement);
 
-// Load HDR environment for reflections (optional, for glass/refraction)
+// Optional: HDR environment
 new RGBELoader()
-  .setPath('textures/env/') // change this to your HDR path
-  .load('studio_small_03_1k.hdr', (hdrEquirect) => {
-    hdrEquirect.mapping = THREE.EquirectangularReflectionMapping;
-    scene.environment = hdrEquirect;
+  .setPath('textures/env/')
+  .load('studio_small_03_1k.hdr', (hdr) => {
+    hdr.mapping = THREE.EquirectangularReflectionMapping;
+    scene.environment = hdr;
   });
 
-// Lights
-const ambient = new THREE.AmbientLight(0xffffff, 0.4);
-scene.add(ambient);
+// ✅ Boosted lighting setup
+scene.add(new THREE.AmbientLight(0xffffff, 0.8)); // was 0.4
 
-const directional = new THREE.DirectionalLight(0xffffff, 0.6);
-directional.position.set(5, 10, 7);
-scene.add(directional);
+const dirLight = new THREE.DirectionalLight(0xffffff, 1.2); // was 0.6
+dirLight.position.set(5, 10, 10);
+scene.add(dirLight);
+
+// Add another light for contrast
+const fillLight = new THREE.PointLight(0xffffff, 1);
+fillLight.position.set(-5, 5, -5);
+scene.add(fillLight);
 
 // Load centerpiece model
 const loader = new GLTFLoader();
@@ -42,18 +47,17 @@ loader.load('center.glb', (gltf) => {
   centerpiece.position.set(0, 0, 0);
   scene.add(centerpiece);
 
-  // Check materials for transparency / refraction support
   centerpiece.traverse((child) => {
     if (child.isMesh && child.material) {
       child.material.transparent = true;
       child.material.opacity = 0.6;
       child.material.roughness = 0;
       child.material.metalness = 1;
-      child.material.envMapIntensity = 1;
+      child.material.envMapIntensity = 1.5;
     }
   });
 }, undefined, (err) => {
-  console.error('Error loading GLB:', err);
+  console.error('GLB load error:', err);
 });
 
 // Resize
