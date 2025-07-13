@@ -2,13 +2,10 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Three.js Scroll Scene</title>
+  <title>Three.js Centerpiece</title>
   <style>
-    body { margin: 0; overflow-x: hidden; }
+    body { margin: 0; overflow: hidden; }
     canvas { display: block; }
-    .scroll-container {
-      height: 300vh; /* Scrollable height */
-    }
   </style>
 
   <!-- ES Module shim + Import Maps -->
@@ -17,15 +14,12 @@
   {
     "imports": {
       "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
-      "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/",
-      "gsap": "https://unpkg.com/gsap@3.12.5/index.js",
-      "gsap/ScrollTrigger": "https://unpkg.com/gsap@3.12.5/ScrollTrigger.js"
+      "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
     }
   }
   </script>
 </head>
 <body>
-  <div class="scroll-container"></div>
   <script type="module" src="./main.js"></script>
 </body>
 </html>
