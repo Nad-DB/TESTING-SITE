@@ -7,7 +7,7 @@ gsap.registerPlugin(ScrollTrigger);
 
 // Scene Setup
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x202020);
+scene.background = new THREE.Color(0x1a1a1a); // darker gray
 
 const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 100);
 camera.position.set(0, 1, 5);
@@ -16,13 +16,7 @@ const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
-// Lighting
-scene.add(new THREE.AmbientLight(0xffffff, 0.6));
-const dirLight = new THREE.DirectionalLight(0xffffff, 1);
-dirLight.position.set(5, 10, 7);
-scene.add(dirLight);
-
-// Load Centerpiece
+// Load Centerpiece Model
 const loader = new GLTFLoader();
 let centerpiece;
 
@@ -31,7 +25,14 @@ loader.load('center.glb', (gltf) => {
   centerpiece.position.set(0, 0, 0);
   scene.add(centerpiece);
 
-  // Animate rotation with ScrollTrigger
+  // Add lights AFTER model is added to scene
+  const ambient = new THREE.AmbientLight(0xffffff, 0.4);
+  const directional = new THREE.DirectionalLight(0xffffff, 0.7);
+  directional.position.set(5, 10, 7);
+  scene.add(ambient);
+  scene.add(directional);
+
+  // Scroll-triggered rotation
   gsap.to(centerpiece.rotation, {
     y: Math.PI * 4,
     scrollTrigger: {
@@ -45,14 +46,14 @@ loader.load('center.glb', (gltf) => {
   console.error('Failed to load GLB:', error);
 });
 
-// Handle resize
+// Resize Handling
 window.addEventListener('resize', () => {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);
 });
 
-// Animation loop
+// Render Loop
 function animate() {
   requestAnimationFrame(animate);
   renderer.render(scene, camera);
