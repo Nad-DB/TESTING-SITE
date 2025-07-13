@@ -1,55 +1,60 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import gsap from 'gsap';
+import ScrollTrigger from 'gsap/ScrollTrigger';
 
+gsap.registerPlugin(ScrollTrigger);
+
+// Scene Setup
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x202020);
 
-const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 100);
 camera.position.set(0, 1, 5);
-camera.lookAt(0, 0, 0);
 
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
 // Lighting
-const light = new THREE.DirectionalLight(0xffffff, 1);
-light.position.set(2, 2, 5);
-scene.add(light);
+scene.add(new THREE.AmbientLight(0xffffff, 0.6));
+const dirLight = new THREE.DirectionalLight(0xffffff, 1);
+dirLight.position.set(5, 10, 7);
+scene.add(dirLight);
 
-const ambient = new THREE.AmbientLight(0x404040);
-scene.add(ambient);
-
-// Load GLB model
+// Load Centerpiece
 const loader = new GLTFLoader();
-let model;
+let centerpiece;
 
-loader.load(
-  'text.glb', // Make sure this path is correct!
-  (gltf) => {
-    model = gltf.scene;
-    model.scale.set(1, 1, 1);
-    model.position.set(0, 0, 0);
-    scene.add(model);
-  },
-  undefined,
-  (error) => {
-    console.error('Failed to load GLB:', error);
-  }
-);
+loader.load('center.glb', (gltf) => {
+  centerpiece = gltf.scene;
+  centerpiece.position.set(0, 0, 0);
+  scene.add(centerpiece);
 
-// Resize handler
+  // Animate rotation with ScrollTrigger
+  gsap.to(centerpiece.rotation, {
+    y: Math.PI * 4,
+    scrollTrigger: {
+      trigger: '.scroll-container',
+      start: 'top top',
+      end: 'bottom bottom',
+      scrub: true
+    }
+  });
+}, undefined, (error) => {
+  console.error('Failed to load GLB:', error);
+});
+
+// Handle resize
 window.addEventListener('resize', () => {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);
 });
 
-// Render loop
+// Animation loop
 function animate() {
   requestAnimationFrame(animate);
-  if (model) model.rotation.y += 0.01;
   renderer.render(scene, camera);
 }
-
 animate();
