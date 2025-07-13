@@ -1,40 +1,55 @@
-<script type="module">
-  import * as THREE from 'https://unpkg.com/three@0.160.0/build/three.module.js';
-  import { GLTFLoader } from 'https://unpkg.com/three@0.160.0/examples/jsm/loaders/GLTFLoader.js';
+import * as THREE from 'three';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
-  const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x202020);
 
-  const renderer = new THREE.WebGLRenderer();
-  renderer.setSize(window.innerWidth, window.innerHeight);
-  document.body.appendChild(renderer.domElement);
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+camera.position.set(0, 1, 5);
+camera.lookAt(0, 0, 0);
 
-  const loader = new GLTFLoader();
-  let model;
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setSize(window.innerWidth, window.innerHeight);
+document.body.appendChild(renderer.domElement);
 
-  loader.load(
-    'text.glb',
-    function (gltf) {
-      model = gltf.scene;
-      scene.add(model);
-    },
-    undefined,
-    function (error) {
-      console.error('An error occurred while loading the GLB file:', error);
-    }
-  );
+// Lighting
+const light = new THREE.DirectionalLight(0xffffff, 1);
+light.position.set(2, 2, 5);
+scene.add(light);
 
-  camera.position.z = 5;
+const ambient = new THREE.AmbientLight(0x404040);
+scene.add(ambient);
 
-  function animate() {
-    requestAnimationFrame(animate);
+// Load GLB model
+const loader = new GLTFLoader();
+let model;
 
-    if (model) {
-      model.rotation.y += 0.01;
-    }
-
-    renderer.render(scene, camera);
+loader.load(
+  'text.glb', // Make sure this path is correct!
+  (gltf) => {
+    model = gltf.scene;
+    model.scale.set(1, 1, 1);
+    model.position.set(0, 0, 0);
+    scene.add(model);
+  },
+  undefined,
+  (error) => {
+    console.error('Failed to load GLB:', error);
   }
+);
 
-  animate();
-</script>
+// Resize handler
+window.addEventListener('resize', () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
+
+// Render loop
+function animate() {
+  requestAnimationFrame(animate);
+  if (model) model.rotation.y += 0.01;
+  renderer.render(scene, camera);
+}
+
+animate();
