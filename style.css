@@ -1,0 +1,13 @@
+body, html {
+  margin: 0;
+  height: 200vh; /* Allows scrolling */
+  overflow-x: hidden;
+  background: #111;
+}
+
+canvas {
+  display: block;
+  position: fixed;
+  top: 0;
+  left: 0;
+}
