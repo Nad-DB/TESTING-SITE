@@ -2,22 +2,30 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Three.js Load GLB</title>
+  <title>Three.js Scroll Scene</title>
   <style>
-    body { margin: 0; overflow: hidden; }
+    body { margin: 0; overflow-x: hidden; }
     canvas { display: block; }
+    .scroll-container {
+      height: 300vh; /* Scrollable height */
+    }
   </style>
+
+  <!-- ES Module shim + Import Maps -->
   <script async src="https://unpkg.com/es-module-shims@1.6.1/dist/es-module-shims.js"></script>
   <script type="importmap">
   {
     "imports": {
       "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
-      "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+      "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/",
+      "gsap": "https://unpkg.com/gsap@3.12.5/index.js",
+      "gsap/ScrollTrigger": "https://unpkg.com/gsap@3.12.5/ScrollTrigger.js"
     }
   }
   </script>
 </head>
 <body>
+  <div class="scroll-container"></div>
   <script type="module" src="./main.js"></script>
 </body>
 </html>
